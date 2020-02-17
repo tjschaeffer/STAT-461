@@ -1,0 +1,47 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 3"
+date: "2/11/20"
+output: html_notebook
+---
+
+## Questions 1, 2, 3 and 4
+(answered in Canvas)
+
+# Question 5
+```{r}
+mydata <- data.frame(ColA=c(1,2,2,2),ColB=c(6,4,5,3))
+plot(mydata)
+```
+```{r}
+cor(mydata$ColA, mydata$ColB)
+```
+
+
+# Question 6 and 7
+```{r}
+library(readr)
+MysteryData <- read_csv("/Users/thomasschaeffer/STAT 462/462_HW3/MysteryData.csv")
+cor(MysteryData$V1, MysteryData$V2)
+plot(MysteryData)
+```
+
+# Question 8 and 9
+```{r}
+forest <- read_csv("/Users/thomasschaeffer/STAT 462/462_HW3/productivity.csv")
+```
+
+```{r}
+ggplot(data=forest,aes(x=animals,y=productivity))+geom_point()+aes(colour=region) + labs(title = "Effect of Animals on Productivity", subtitle = "TJ Schaeffer")
+```
+# Question 10
+```{r}
+cor.test(forest$animals, forest$productivity)
+```
+
+# Quesiton 11
+```{r}
+library(lattice)
+xyplot(productivity ~ animals| region,data=forest)
+```
+

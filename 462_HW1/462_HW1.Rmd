@@ -1,0 +1,77 @@
+---
+Name: "TJ Schaeffer"
+title: "Homework 1"
+date: 1/27/20
+output: html_notebook
+---
+
+# Activity 1
+
+```{r}
+?mtcars 
+
+head(mtcars)
+
+summary(mtcars)
+```
+1a) 335
+1b) 3,325
+
+# Activity 2
+```{r}
+ttype=table(mtcars$am) #To get the levels of the variable
+ttype_lbls=c("Auto","Manual")
+pie(ttype,labels=ttype_lbls,col=rainbow(length(ttype_lbls)),main="Pie Chart of Car Transmission for MTCars")
+```
+# Activity 3
+```{r}
+boxplot(mpg~am,data=mtcars,xlab="Transmission",ylab="mpg",col=c("deepskyblue4","deepskyblue"),names=c("Auto","Manual")) 
+```
+Based on the boxplot, I can infer that cars with manual transmissions generally have high a higher mpg than cars with automatic transmissions.
+
+# Activity 4
+```{r}
+mean(mtcars$mpg)
+sd(mtcars$mpg)
+```
+
+# Activity 5
+```{r}
+qqnorm(mtcars$mpg, pch = 1, frame = FALSE)
+qqline(mtcars$mpg, col = "steelblue", lwd = 2)
+
+hist(mtcars$mpg,br=10)
+```
+A normal QQ-plot is a scatterplot of two quantiles against each other that forms a roughly straight line. In this case, it is difficult for us to tell if the data comes from a population with a normal distribution because the data does not really form a straight line, meaning that it most likely isn't normal.
+
+# Activity 6
+6a. If X ∼ N(5,2), then find P(X ≤ 4) [3 marks]
+
+6b. If X ∼ N(5,2), then find P(X > 6) [3 marks]
+
+6c. If X ∼ N(10,1), then find P(X < 9) [3 marks]
+
+7a. If X ∼ N(5,2), then find the value a such that P(X < a) = 0.025 [3 marks]
+
+7b. If X ∼ N(5,2), then find the value a such that P(X > a) = 0.025 [3 marks]
+
+7c. If X ∼ N(10,1), then find the value a such that P(X > a) = 0.55 [3 marks]
+```{r}
+pnorm(4, mean = 5, sd = sqrt(2), lower.tail = TRUE, log.p = FALSE)
+pnorm(6, mean = 5, sd = sqrt(2), lower.tail = FALSE, log.p = FALSE)
+pnorm(9, mean = 10, sd = 1, lower.tail = TRUE, log.p = FALSE)
+qnorm(.025, mean = 5, sd = sqrt(2), lower.tail = TRUE, log.p = FALSE)
+qnorm(.025, mean = 5, sd = sqrt(2), lower.tail = FALSE, log.p = FALSE)
+qnorm(.55, mean = 10, sd = 1, lower.tail = FALSE, log.p = FALSE)
+```
+
+Question 8. 
+Records maintained by the your admin office indicate that amount of time elapsed between the submission of travel receipts and the final reimbursement of funds has approximately a normal distribution with a mean of 39 days and a standard deviation of 6 days.
+
+If you submitted your travel claim 55 days ago, what is the probability that it should have been returned by now? What might you conclude? You can do this either by hand or in R. [6 marks]
+
+
+```{r}
+pnorm(55, mean = 39, sd = 6, lower.tail = TRUE, log.p = FALSE)
+```
+

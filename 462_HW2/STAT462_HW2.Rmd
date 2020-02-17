@@ -1,0 +1,96 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 1"
+date: "1/27/20"
+output: html_notebook
+---
+
+# Activity 1
+
+Create a code chunk then work out and run the R code to do the following tasks.(Use google and the command help file to help you work out the command to use)
+
+a) Round the number 3.5285 to 2 decimal places.
+b) Take the co-sine of the number 6.34 and assign it to a variable called ANSWER1
+c) Print ANSWER1 onto the screen
+d) Generate 20 random numbers from a uniform distribution and assign them to a variable called ANSWER2
+e) Mulitply ANSWER2 by 3. Write a comment to explain what is happening.
+f) T-Rex heights are modelled as a normal distribiution with mean = 2m and standard deviation 0.25m. What’s the probability of a T-Rex being less than 1.6m tall? (expressed as a probabiltiy between 0 and 1)
+
+Run the code chunk, then take a screenshot of BOTH the code-chunk code the results to add on the canvas quiz
+
+
+```{r}
+round(3.5285, 2)
+
+ANSWER1 <- cos(6.34)
+print(ANSWER1)
+
+ANSWER2 <- runif(20)
+ANSWER2 <- ANSWER2 * 3 # Multiplying the 20 randomly-generated numbers by 3
+print(ANSWER2)
+
+pnorm(1.6, mean = 2, sd = .25, lower.tail = TRUE)
+```
+
+# Question 2
+(answered on paper)
+
+# Question 3
+
+The sample mean weight loss of 11oz is in the 99% confidence interval, meaning there is sufficient evidence to believe that the programmes is working and the penguins are losing weight.
+
+
+```{r}
+# Prep data for next questions
+drugs <- read.csv("/Users/thomasschaeffer/STAT 462/drug.csv")
+```
+
+```{r}
+# Data facts
+summary(drugs)
+sd(drugs$Dissolution)
+dim(drugs)
+hist(drugs$Dissolution)
+qqnorm(drugs$Dissolution)
+```
+
+# Question 4
+Number of rows: 24
+
+# Question 5
+According to the histogram from before, the data does not look to be normal. Use a t-distribution because the sample size is less than 30. (Plots/evidence are above.)
+
+# Question 6
+```{r}
+me <- qt(.99, 23)*((sd(drugs$Dissolution))/(sqrt(24)))
+mean(drugs$Dissolution) - me
+mean(drugs$Dissolution) + me
+```
+
+# Question 7
+Since the 99% confidence interval includes values less than 20 mg, there is sufficient evidence to suggest that the batch of pills has a mean dissolution rate less than 20 mg.
+
+# Question 8
+(on paper)
+
+# Question 9
+```{r}
+sleep <- c(8.1,6.7,3.3,7.2,8.1,9.2,6.0,7.4,6.4,6.9,7.0,7.8,6.7,7.2,7.6,7.9)
+t.test(sleep, mu = 6.6, conf.level = .99)
+```
+
+# Question 10
+a) H0: u = 35 HA: u < 35
+b) Alpha = 0.01
+c) One-sided
+d) T-distribution
+e) (ALLOWED TO SKIP)
+f) Found Below
+```{r}
+tires <- read.csv("/Users/thomasschaeffer/STAT 462/tires.csv")
+t.test(tires$MilesDriven, alternative = "less", mu = 35, conf.level = .99)
+```
+g) Due to the p-value of 0.008 being less than the alpha of 0.01, we reject the null hypothesis, which means that there is sufficient evidence to suggest that the true mean of the mileage of the tires is less than 35,000 miles, which would mean that the manufacturer's claim is false as a result.
+
+# Question 11
+(Pic submitted)
