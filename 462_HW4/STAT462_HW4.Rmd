@@ -1,0 +1,87 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 4"
+date: "2/18/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(readr)
+library(DataComputing)
+library(dplyr)
+library(ggplot2)
+library(stats)
+```
+
+```{r}
+# loading playbill package
+playbill <- read.csv("/Users/thomasschaeffer/Sophomore Year/STAT-462/462_HW4/playbill.csv")
+```
+
+# Question 1 - What is the response variable?
+Current Week
+
+# Question 2 
+```{r}
+ggplot(data=playbill,aes(x=LastWeek,y=CurrentWeek))+geom_point() + labs(title = "Effect of Last Week on CurrentWeek", subtitle = "TJ Schaeffer")
+```
+
+# Question 3 and 4
+```{r}
+lm(CurrentWeek ~ LastWeek, data = playbill)
+```
+
+# Question 5
+```{r}
+ggplot(data=playbill,aes(x=LastWeek,y=CurrentWeek)) + geom_smooth(method='lm', se = FALSE, color = "blue") + geom_point() + labs(title = "Effect of Last Week on CurrentWeek with SRL", subtitle = "TJ Schaeffer")
+```
+
+# Question 6
+```{r}
+GDPS <- read.csv("/Users/thomasschaeffer/Sophomore Year/STAT-462/462_HW4/GDP_vs_Satisfaction.csv")
+ggplot(data=GDPS,aes(x=GDP,y=Satisfaction))+geom_point() + labs(title = "Effect of GDP on Life Satisfaction", subtitle = "TJ Schaeffer")
+```
+Response variable is Life Satisfaction, GDP is the explanatory variable, and the relationship seems to be a strong, positive linear relationship despite some outliers. 
+
+# Question 7
+```{r}
+cor.test(GDPS$Satisfaction, GDPS$GDP)
+```
+
+# Question 8
+```{r}
+ggplot(data=GDPS,aes(x=GDP,y=Satisfaction)) + geom_smooth(method='lm', se = FALSE, color = "blue") + geom_point() + labs(title = "Effect of GDP on Life Satisfaction with SRL", subtitle = "TJ Schaeffer")
+```
+
+
+# Question 9
+```{r}
+GDPSnew <- GDPS[-21, ] 
+```
+
+```{r}
+ggplot(data=GDPSnew,aes(x=GDP,y=Satisfaction))+geom_point() + geom_smooth(method = "lm", se = FALSE, color = "blue4") + labs(title = "Effect of GDP on Life Satisfaction w/SRL w/o 'Luxembourg'", subtitle = "TJ Schaeffer")
+```
+
+# Question 10
+After viewing the plot, it does seem like the model fit has improved once "Luxembourg" was removed from the dataset because it increases the correlation between all the points, which is evident in the increase from a .687 correlation to .771 correlation 
+```{r}
+cor.test(GDPSnew$Satisfaction, GDPSnew$GDP)
+```
+
+# Question 11
+Salary = 25792.2 + 9450(YearsExperience)
+
+# Question 12
+Based on the equation before, we can determine that the average starting salary of all jobs is 25,792.20 dollars and as a worker increases with Years of Experience, the salary increases by 9450 dollars per year. 
+
+# Question 13
+R^2 = SSReg / SST = 2.0857 X 10^10 / 2.1795 x 10^10 = .957
+SST = 2.0857 X 10^10 + 9.3813 X 10^8 = 2.1795 x 10^10
+SSReg = 2.0857 X 10^10
+
+Based on the coefficient of determination, 95.7% of the the data in the salarydata is accounted for by the fitted regression line. 
