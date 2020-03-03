@@ -1,0 +1,18 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 4"
+date: "2/18/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(readr)
+library(DataComputing)
+library(dplyr)
+library(ggplot2)
+library(stats)
+```
