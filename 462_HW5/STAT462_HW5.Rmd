@@ -1,7 +1,7 @@
 ---
 author: "TJ Schaeffer"
-title: "Homework 4"
-date: "2/18/20"
+title: "Homework 5"
+date: "3/3/20"
 output: html_notebook
 ---
 
@@ -16,3 +16,75 @@ library(dplyr)
 library(ggplot2)
 library(stats)
 ```
+
+## Data Description
+
+1. The data set contains single season data of NBA players for 67 years, from 1950 to 2017. The statistics include basic box-stats such as points and assists in addition to more advanced stats such as value over replacement. 
+
+2. I like this data set becuase I am a very big NBA basketball fan and thought this would be an interesting data set to explore. 
+
+3. I want to see if a player's points (PTS) in a season affects their respective Win Share stat (WS), since a player's points is an important factor in the WS statistic.
+
+4. Goldstein, O. (2018, April 27). NBA Players stats since 1950. Retrieved March 3, 2020, from https://www.kaggle.com/drgilermo/nba-players-stats
+
+
+## Initial explanatory analysis
+
+5. The explanatory variable is the player's points in a season and the response variable is the player's season win share statistic.  
+
+6. 
+```{r}
+# Reading in player data
+NBAPlayerStats <- read.csv("Seasons_Stats.csv")
+```
+
+```{r}
+# Seeing if variables are normal
+qqplot(NBAPlayerStats$PTS, NBAPlayerStats$WS)
+```
+After viewing the data, I found that there is almost 25,000 cases of data. From this qqplot, it appears that both of the variables are roughly normal. There does not seem to be any outlier trends in the data, although it appears that there definitely could be one or two outliers.
+
+7. 
+```{r}
+NBAPlayerStats %>%
+  ggplot(aes(x = PTS, y = WS)) +
+  geom_point()
+```
+Based on the plot, it seems that there is a strong, positive linear relationship between the two variables with possible outliers. 
+
+## Correlation
+8.
+```{r}
+cor.test(NBAPlayerStats$PTS, NBAPlayerStats$WS, conf.level = .99)
+```
+cor = 0.8705414, 99 percent confidence interval for correlation: (0.8665056 0.8744633)
+
+## Regression
+9. 
+```{r}
+fit1 <- lm(NBAPlayerStats$WS ~ NBAPlayerStats$PTS)
+fit1
+```
+
+10. WS = -0.269613 + 0.005399(PTS)
+
+11. 
+```{r}
+summary(fit1)
+```
+R^2: 0.7578 Adj R^2: 0.7578
+
+12. The normal R^2 assumes that every single variable explains the variation in the response variable while the adjusted R^2 cotains the amount of variation in the response variable that is only explained by the explanatory variable. (Source: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=8&cad=rja&uact=8&ved=2ahUKEwjnrdu_9__nAhVShOAKHRRnDcQQFjAHegQIDBAH&url=https%3A%2F%2Fdatascience.stackexchange.com%2Fquestions%2F14693%2Fwhat-is-the-difference-of-r-squared-and-adjusted-r-squared&usg=AOvVaw0B38dKx7t52mkDIxrubZ8e)
+
+13. 
+```{r}
+NBAPlayerStats %>%
+  ggplot(aes(x = PTS, y = WS)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+After viewing the plot, I believe the regression line has a solid impact on the plot, as there more certainly appears to be a strong, positive linear relationship.
+
+14. H0: B1 = 0 HA: B1 != 0
+Conclusion: Since the p-value is less than alpha value of a = 0.05, we have to evidence to reject the null hypothesis and suggest that there is evidence to assume that the B1/slope of the regression is not equal to 0.
+
