@@ -1,0 +1,65 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(readr)
+library(DataComputing)
+library(dplyr)
+library(ggplot2)
+library(stats)
+```
+
+
+```{r}
+linearity <- read.csv("~/Sophomore Year/STAT-462/462_LAB/linearity.csv")
+normality <- read.csv("~/Sophomore Year/STAT-462/462_LAB/normality.csv")
+ev <- read.csv("~/Sophomore Year/STAT-462/462_LAB/Equal variance.csv")
+independence <- read.csv("~/Sophomore Year/STAT-462/462_LAB/independence.csv")
+```
+
+```{r}
+# Linearity
+linearity %>%
+  ggplot(aes(x= X7.1795, y= X14.5433)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+normality %>%
+  ggplot(aes(x= X8.4615, y= X23.3894)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+ev %>%
+  ggplot(aes(x= X7.4359, y= X19.1587)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+
+```{r}
+independence %>%
+  ggplot(aes(x= X5.641, y= X8.3894)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+
+
+
+
+
+
