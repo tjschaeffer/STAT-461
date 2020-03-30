@@ -1,0 +1,123 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 6"
+date: "3/22/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(readr)
+library(DataComputing)
+library(dplyr)
+library(ggplot2)
+library(stats)
+library(MASS)
+library(car)
+```
+
+```{r}
+# Reading in Data
+bonds <- read.csv("bonds.csv")
+```
+
+1. 
+
+```{r}
+fit <- lm(BidPrice~CouponRate, data = bonds)
+bonds %>%
+  ggplot(aes(x= CouponRate, y= BidPrice)) +
+  geom_point() + 
+  geom_smooth(mehtod = fit, se = FALSE) +
+  labs(title = "BidPrice vs CouponRate")
+  
+```
+a) The form is non-linear, the direction is mostly positive/upward facing, the strength is strong and there are a couple outliers in the data towards the beginning of the best fit line.
+
+b) Based off the line of fit, I do not believe the data meets the linearity assumption.
+
+c) Based off the graph, it seems the datat is independent. 
+
+d) Based off the graph, it seems that that data seems to be normally distributed.
+
+e) For the most part, it seems that residuals look to be homoskedastic.
+
+2. 
+```{r}
+plot(hatvalues(fit)~bonds$CouponRate, type = "h", ylab = "Leverage")
+abline(h=((2*2)/nrow(bonds)), lty = "dotted")
+```
+Based off the graph, the points that seem to have a high leverage are at the beginning and the very end of the line of best fit. It seems you chose the dotted line because value based off the equation 2p/n, with p = number of regression coefficients (2) and n = number of observations (35). 
+
+3. 
+```{r}
+bond.studentres <- studres(fit)
+bond.fittedvalues <- fit$fitted
+
+plot(bond.studentres~bond.fittedvalues, ylab = "Standarized Residuals", xlab = "Fitted Values")
+abline(h = 0, color = "azure4", lty = 2)
+
+plot(fit)
+```
+According to the graph, there are 4 points that seem to be outliers. There is no equal varianc and there is no linearity.
+
+4. 
+```{r}
+plot(cooks.distance(fit), ylab = "Cook's Distance")
+abline(h = 1, col = "red", lty = 2)
+
+plot(fit)
+```
+Based off the two graphs, the only point that seems to have significant influence is the 13th point in the data, which is the point where the best fit line starts. 
+
+5. 
+```{r}
+bonds2 <- bonds[-c(4, 13, 35), ]
+fit2 <- lm(BidPrice~CouponRate, data = bonds2)
+plot(fit2)
+
+bonds2 %>%
+  ggplot(aes(x= CouponRate, y= BidPrice)) +
+  geom_point() + 
+  geom_smooth(mehtod = fit, se = FALSE) +
+  labs(title = "BidPrice vs CouponRate")
+```
+
+6. (3rd plot from #5)
+```{r}
+shapiro.test(rstandard(fit2))
+```
+
+7. Based off the test, there is cause for cocern about the normality of the data.
+
+8. H0: B1 = 0 HA: B1 != 0
+```{r}
+summary(lm(BidPrice~CouponRate, data = bonds))
+```
+Based off the lm output, it seems that the relationship is positive and that there is evidence that bonds with a higher coupon rate are more expensive. 
+
+9. 
+```{r}
+newdata <- data.frame(CouponRate=0)
+predict(fit, newdata = newdata, interval = "confidence", level = 0.99)
+```
+
+10. This value is not realistic beause there cannot be a 0% Coupon Rate for a bond.
+
+11. I need to calculate a 95% prediction interval because it's asking for specific interval for a specific variable.
+
+12.
+```{r}
+newdata <- data.frame(CouponRate=9)
+predict(fit, newdata = newdata, interval = "prediction", level = 0.99)
+```
+
+13. Good deal
+
+
+
+
+
