@@ -1,0 +1,145 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 8"
+date: "4/10/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(MASS)
+library(car)
+library(nortest)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(MuMIn)
+library(corrplot)
+# reading in data
+aphid <- read.csv("462_HW8/aphideData.csv")
+```
+
+1.
+```{r}
+plot(aphid)
+```
+Based off the scatterplot matrix, it seems that all plots except the two with y and x2 have negative relationships, while the 2 plots with y and x2 seem to have positive relationships. All seem to be strong, linear relationships as well. In simpler terms, with y and x1, it seems that as mean temperature increases, the infestation rate decreases. With x1 and x2, as mean relative humidity increases, it seems that the mean temperature decreases as well. Finally, with y and x2, as mean humidity increases, infestation rates increases. 
+
+2.
+```{r}
+# Creating Correlation Matrix
+aphidCorMat <- cor(aphid)
+
+# Obtaining Correlation Plot
+corrplot(aphidCorMat, method = "number")
+```
+I think with how how high the correlation coefficient is for the two explanatory variables, I believe multicollinearity could be possible in the model. 
+
+3. 
+```{r}
+fit1 <- lm(y~ x1 + x2, data = aphid)
+summary(fit1)
+```
+InfestRate = 20 - .29Temp + 1.4Humid
+
+With all the other variables controlled and equal to 0, the infestation rate is 20 aphids/100 leaves. With the the humidity variable controlled, the infestation rate dropes by .29 aphids/100 leaves for each single unit increase in mean temperature (in Celsius). With the temperature variable controlled, the infestation rate increases by 1.4 aphids/100 leaves for each single percentage increase in mean relative humidity. 
+
+4. 
+```{r}
+# Std Res
+bass.studentres <- studres(fit1)
+bass.fittedvalues <- fit1$fitted
+
+plot(bass.studentres~bass.fittedvalues, ylab = "Standarized Residuals", xlab = "Fitted Values")
+abline(h = 0, color = "azure4", lty = 2)
+
+#Cook's Distance
+plot(cooks.distance(fit1), ylab = "Cook's Distance")
+abline(h = 6/35, col = "red", lty = 2)
+
+# Leverage Points
+plot(hatvalues(fit1)~aphid$x1 + aphid$x2, type = "h", ylab = "Leverage")
+abline(h=((2*3)/nrow(aphid)), lty = "dotted")
+
+# Influential Plot
+influencePlot(fit1)
+
+```
+Based off the different plots, it seems that there is only one point that really stands out in the dataset, which is the last point. This point is found to be the only point that could be considered high leverage and an outlier point. When it comes to linear model assumptions, it seems that the residuals seems to be randomly scattered, mostly hovering around the the residual = 0, independent and homoskedastic, meaning that it fullfills all of the linear regression assumptions. 
+5.
+H0: B1 = B2 = 0
+HA: At least one Bi is not equal to 0.
+
+Conclusion: Since the p-value of the model is less than the alpha of 0.05, we reject the null hypothesis and suggest that there is eveidence that at least one slope is not equal to 0 and that the overall fit of the model is strong. 
+
+6. The overall proportion of variability explained by the model fit is 52%, which is the adjusted R^2 value. This value was picked because it's a stronger statistic of the normal R-squared, as it allows independent variables that have a correlation with the response variable to increase the adj. R- squared value and decrease it with a dependent variable.
+
+7. 
+H0: B2 = 0
+HA: B2 != 0
+
+Conclusion: Since the p-value of the model is less than the alpha of 0.05, we reject the null hypothesis and suggest that the humidity variable is a necessary part of the model. 
+
+8. 
+H0: B1 = 0
+HA: B1 != 0
+
+Conclusion: Since the p-value of the model is greater than the alpha of 0.05, we fail to reject the null hypothesis and suggest that the temperature variable is not a necessary part of the model. 
+
+9. 
+Based off the two previous experiments, I have concluded to move forward with only the humidity variable and take out the temperature variable out of the experiment. 
+
+10. 
+```{r}
+fit2 <- lm(y~x2,data = aphid)
+summary(fit2)
+```
+InfestRate = 9.41 + 1.47Humid
+
+When the mean relative humidity is equal to 0, the infestation rate is 9.41 aphids/100 leaves. With each percentage increase in mean relative humidity, the infestation rate increases by 1.47 aphids/100 leaves.
+
+11. 
+```{r}
+# AIC fit
+AICc(fit1,fit2)
+
+# ANOVA test
+anova(fit1,fit2)
+```
+
+12. 
+Although the AIC fit for fit2 is less than fit1, since the p-value is greater than the alpha of 0.05, we do not have strong evidence in favor of the reduced model against the full model. 
+
+13. 
+```{r}
+fit3 <- lm(y~x1, data = aphid)
+# AIC fit
+AICc(fit2,fit3)
+
+# Fit2 summary
+summary(fit2)
+```
+
+```{r}
+#Fit3 summary
+summary(fit3)
+```
+
+Since fit2 has a lower AIC value and accounts for a larger adjusted R^2 value, I would choose fit 2.
+
+14. 
+```{r}
+newHumid <- data.frame(x2 = 115)
+predict(fit2, newdata = newHumid, interval = 'prediction', level = 0.95)
+```
+No because it seems that the prediction interval is incredibly out of the range of normal values for the response variable. 
+
+15. 
+```{r}
+newHumid <- data.frame(x2 = 65)
+predict(fit2, newdata = newHumid, interval = 'prediction', level = 0.95)
+```
+

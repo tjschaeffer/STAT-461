@@ -1,0 +1,146 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 7"
+date: "3/22/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(MASS)
+library(car)
+library(nortest)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(MuMIn)
+# reading in data
+bass <- read.csv("bass.csv")
+```
+
+
+1. Explanatory: Alkalinity
+Response: Mercury
+
+2.
+```{r}
+bass %>%
+  ggplot(aes(x = Alkalinity, y = Mercury)) +
+  geom_point()
+```
+Based off the graph, I do not believe the data meets the linearity assumption, but it seems to be independent and normally distributed, and the residuals look to be homoskedastic.
+
+3. 
+```{r}
+fit <- lm(Mercury~Alkalinity, data = bass)
+summary(fit)
+```
+
+4.
+```{r}
+bass %>%
+  ggplot(aes(x = Alkalinity, y = Mercury)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)
+```
+Based on the plot, it seems that a lake with 0 mg/l alkalinity contains .72 mg of Mercury and as the alkalinity of a lake increases by 1 mg/l, the amount of Mercury in that lake decreases by .005 mg. 
+
+5.
+```{r}
+# Std Res
+bass.studentres <- studres(fit)
+bass.fittedvalues <- fit$fitted
+
+plot(bass.studentres~bass.fittedvalues, ylab = "Standarized Residuals", xlab = "Fitted Values")
+abline(h = 0, color = "azure4", lty = 2)
+
+#Cook's Distance
+plot(cooks.distance(fit), ylab = "Cook's Distance")
+abline(h = 4/53, col = "red", lty = 2)
+```
+
+Based off the two plots, it seems that there a few residuals that are different from the rest of the data, proving my assumption that there is outliers in the data. 
+
+6.
+```{r}
+plot(fit)
+plot(hatvalues(fit)~bass$Alkalinity, type = "h", ylab = "Leverage")
+abline(h=((2*2)/nrow(bass)), lty = "dotted")
+```
+
+The name of the lake with highest residual mercury value: Alligator
+The name of the lake with highest leverage: Farm-14
+The name of the lake with highest Cook’s distance: Puzzle
+
+7. 
+```{r}
+influencePlot(fit)
+```
+
+I do not agree with this comment because based off the influence plot as well as the standard residual plot and the Cook's Distance plot, it seems to me that there is a least 4 points that are influential. 
+
+8. Based off what we talked about in class, I would first start with transforming the explanatory variable and then if the adjusted R^2 value is too low, I would try transforming either just the response variable or possibly both to see what produces the highest adjusted R^2 value. 
+
+9. 
+```{r}
+# Log transformation
+logfit <- lm(Mercury~log(Alkalinity), data = bass)
+summary(logfit)
+
+# Sqrt transformation
+sqrtfit <- lm(Mercury~sqrt(Alkalinity), data = bass)
+summary(sqrtfit)
+```
+Pick: Log
+
+10.
+```{r}
+AICc(logfit, sqrtfit)
+```
+Logfit seems to have a higher adjust R^2 value and has a lower AIC value.
+
+11.
+```{r}
+# Log transformation plot
+bass %>%
+  ggplot(aes(x = Alkalinity, y = Mercury)) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y~log(x), se = FALSE)
+```
+
+12. 
+```{r}
+#Cook's Distance
+plot(cooks.distance(logfit), ylab = "Cook's Distance")
+abline(h = 4/53, col = "red", lty = 2)
+
+# High Leverage
+plot(hatvalues(logfit)~bass$Alkalinity, type = "h", ylab = "Leverage")
+abline(h=((2*2)/nrow(bass)), lty = "dotted")
+
+# Normal Residual
+plot(logfit)
+
+# Std Red
+bass.studentres2 <- studres(logfit)
+bass.fittedvalues2 <- logfit$fitted
+plot(bass.studentres2~bass.fittedvalues2, ylab = "Standarized Residuals", xlab = "Fitted Values")
+abline(h = 0, color = "azure4", lty = 2)
+```
+
+13. 
+```{r}
+newlake <- data.frame(Alkalinity = 40)
+predict(logfit, newdata = newlake, interval = 'prediction', level = 0.99)
+```
+No because the 99% prediction interval goes above 1mg of Mercury, meaning that there is a chance that a fish can contain more than 1 mg of Mercury.
+
+14. 
+```{r}
+newlake2 <- data.frame(Alkalinity = 20)
+predict(logfit, newdata = newlake2, interval = 'prediction', level = 0.95)
+```
+
