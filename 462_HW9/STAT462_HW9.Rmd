@@ -1,0 +1,23 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 9"
+date: "4/20/20"
+output: html_notebook
+---
+
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(MASS)
+library(car)
+library(nortest)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(MuMIn)
+library(corrplot)
+# reading in data
+aphid <- read.csv("aphideData.csv")
+```

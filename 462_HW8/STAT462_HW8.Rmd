@@ -19,7 +19,7 @@ library(readr)
 library(MuMIn)
 library(corrplot)
 # reading in data
-aphid <- read.csv("462_HW8/aphideData.csv")
+aphid <- read.csv("aphideData.csv")
 ```
 
 1.
@@ -36,7 +36,7 @@ aphidCorMat <- cor(aphid)
 # Obtaining Correlation Plot
 corrplot(aphidCorMat, method = "number")
 ```
-I think with how how high the correlation coefficient is for the two explanatory variables, I believe multicollinearity could be possible in the model. 
+Although the correlation between x1 and x2 is a little high at -.82, I do not believe there is any significant correlations to be concerned about multicollinearity.
 
 3. 
 ```{r}
@@ -50,25 +50,31 @@ With all the other variables controlled and equal to 0, the infestation rate is 
 4. 
 ```{r}
 # Std Res
-bass.studentres <- studres(fit1)
-bass.fittedvalues <- fit1$fitted
+aphid.studentres <- studres(fit1)
+aphid.fittedvalues <- fit1$fitted
 
-plot(bass.studentres~bass.fittedvalues, ylab = "Standarized Residuals", xlab = "Fitted Values")
-abline(h = 0, color = "azure4", lty = 2)
+plot(aphid.studentres~aphid.fittedvalues, ylab = "Standarized Residuals", xlab = "Fitted Values")
+abline(h = 0, lty = 2)
 
 #Cook's Distance
 plot(cooks.distance(fit1), ylab = "Cook's Distance")
-abline(h = 6/35, col = "red", lty = 2)
+abline(h = 1, col = "red", lty = 2)
 
 # Leverage Points
 plot(hatvalues(fit1)~aphid$x1 + aphid$x2, type = "h", ylab = "Leverage")
 abline(h=((2*3)/nrow(aphid)), lty = "dotted")
 
-# Influential Plot
-influencePlot(fit1)
+# Normality
+ad.test(aphid.studentres)
 
+# Vif
+vif(fit1)
+
+# Influence Plot
+influencePlot(fit1)
 ```
-Based off the different plots, it seems that there is only one point that really stands out in the dataset, which is the last point. This point is found to be the only point that could be considered high leverage and an outlier point. When it comes to linear model assumptions, it seems that the residuals seems to be randomly scattered, mostly hovering around the the residual = 0, independent and homoskedastic, meaning that it fullfills all of the linear regression assumptions. 
+Based off the different plots, it seems that there is only one point that really stands out in the dataset, which is the last point. This point is found to be the only point that could be considered high leverage. When it comes to linear model assumptions, it seems that the residuals seems to be randomly scattered, mostly hovering around the the residual = 0 line making it homoskedastic, independent and have a high p-value in the Anderson Darling test that suggests normality. This meaning that it fulfills all of the linear regression assumptions. Additionally, with the 5th assumption, there does not seem to be multicollinearity based off the VIF graph.
+
 5.
 H0: B1 = B2 = 0
 HA: At least one Bi is not equal to 0.
@@ -109,6 +115,7 @@ AICc(fit1,fit2)
 # ANOVA test
 anova(fit1,fit2)
 ```
+H0: B1 = 0Ha: B1 != 0Conclusion: Since the p-value of .8378 is larger than the alpha of 0.01, we fail to reject null hypothesis and state that B1 is insignificant to the model.
 
 12. 
 Although the AIC fit for fit2 is less than fit1, since the p-value is greater than the alpha of 0.05, we do not have strong evidence in favor of the reduced model against the full model. 
@@ -128,9 +135,8 @@ summary(fit2)
 summary(fit3)
 ```
 
-Since fit2 has a lower AIC value and accounts for a larger adjusted R^2 value, I would choose fit 2.
+Since fit2 has a lower AIC value and accounts for a larger adjusted R^2 value, I would choose fit2.
 
-14. 
 ```{r}
 newHumid <- data.frame(x2 = 115)
 predict(fit2, newdata = newHumid, interval = 'prediction', level = 0.95)
@@ -140,6 +146,6 @@ No because it seems that the prediction interval is incredibly out of the range 
 15. 
 ```{r}
 newHumid <- data.frame(x2 = 65)
-predict(fit2, newdata = newHumid, interval = 'prediction', level = 0.95)
+predict(fit2, newdata = newHumid, interval = 'confidence', level = 0.95)
 ```
 
