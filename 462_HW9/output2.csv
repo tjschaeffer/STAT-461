@@ -1,0 +1,22 @@
+NumberofVariables,adjRsq,VariablesIncludedinModel
+1,0.01534,AudienceScore
+1,0.00134,TheatersOpenWeek
+1,0,RottenTomatoes
+1,-0.00062,DomesticGross
+1,-0.00212,BOAverageOpenWeek
+2,0.01534,RottenTomatoes AudienceScore
+2,0.0147,AudienceScore BOAverageOpenWeek
+2,0.00996,AudienceScore DomesticGross
+2,0.00915,AudienceScore TheatersOpenWeek
+2,0.00134,RottenTomatoes TheatersOpenWeek
+3,0.0147,RottenTomatoes AudienceScore BOAverageOpenWeek
+3,0.00996,RottenTomatoes AudienceScore DomesticGross
+3,0.00958,AudienceScore BOAverageOpenWeek DomesticGross
+3,0.00915,RottenTomatoes AudienceScore TheatersOpenWeek
+3,0.00905,AudienceScore TheatersOpenWeek BOAverageOpenWeek
+4,0.00958,RottenTomatoes AudienceScore BOAverageOpenWeek DomesticGross
+4,0.00905,RottenTomatoes AudienceScore TheatersOpenWeek BOAverageOpenWeek
+4,0.00437,AudienceScore TheatersOpenWeek BOAverageOpenWeek DomesticGross
+4,0.00412,RottenTomatoes AudienceScore TheatersOpenWeek DomesticGross
+4,-0.00419,RottenTomatoes TheatersOpenWeek BOAverageOpenWeek DomesticGross
+5,0.00437,RottenTomatoes AudienceScore TheatersOpenWeek BOAverageOpenWeek DomesticGross

@@ -1,0 +1,22 @@
+NumberofVariables,BIC,VariablesIncludedinModel
+1,460.36997,AudienceScore
+1,461.13909,RottenTomatoes
+1,461.97927,TheatersOpenWeek
+1,462.20292,DomesticGross
+1,462.37329,BOAverageOpenWeek
+2,460.36997,RottenTomatoes AudienceScore
+2,461.49269,AudienceScore BOAverageOpenWeek
+2,461.97927,RottenTomatoes TheatersOpenWeek
+2,462.02965,AudienceScore DomesticGross
+2,462.12111,AudienceScore TheatersOpenWeek
+3,461.49269,RottenTomatoes AudienceScore BOAverageOpenWeek
+3,462.02965,RottenTomatoes AudienceScore DomesticGross
+3,462.12111,RottenTomatoes AudienceScore TheatersOpenWeek
+3,463.13814,AudienceScore BOAverageOpenWeek DomesticGross
+3,463.19691,AudienceScore TheatersOpenWeek BOAverageOpenWeek
+4,463.13814,RottenTomatoes AudienceScore BOAverageOpenWeek DomesticGross
+4,463.19691,RottenTomatoes AudienceScore TheatersOpenWeek BOAverageOpenWeek
+4,463.7423,RottenTomatoes AudienceScore TheatersOpenWeek DomesticGross
+4,464.65576,RottenTomatoes TheatersOpenWeek BOAverageOpenWeek DomesticGross
+4,464.79625,AudienceScore TheatersOpenWeek BOAverageOpenWeek DomesticGross
+5,464.79625,RottenTomatoes AudienceScore TheatersOpenWeek BOAverageOpenWeek DomesticGross

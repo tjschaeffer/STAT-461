@@ -1,0 +1,130 @@
+---
+author: "TJ Schaeffer"
+title: "Homework 10"
+date: "4/27/20"
+output:
+  html_notebook:
+    toc: true
+    toc_float: false
+    toc_depth: 2
+---
+
+
+### Setup
+```{r}
+# clean up workspace environment
+rm(list = ls())
+
+# all packages used for the assignment
+library(MASS)
+library(car)
+library(nortest)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(MuMIn)
+library(corrplot)
+library(lmtest)
+library(StepReg)
+# reading in data
+pirates <- read.csv("462pirates.csv")
+```
+
+## Questions 1, 2 and 3
+
+### Question 1
+* Numeric - Age, Height, Tattoos, Beard.Length
+* Nominal-Categorical - Gender, Sword.type
+* Ordinal Categorical - Eyepatch
+
+### Question 2
+```{r}
+# Creating table to find female pirates who have sword type sabre.
+table(pirates$gender,pirates$sword.type)
+```
+31 female identifying pirates wear eyepatches.
+
+### Question 3
+```{r}
+# Changing gender variable to factor type
+pirates$gender <- as.factor(pirates$gender)
+# Creating linear model
+fit1 <- lm(height~ age + gender, data = pirates)
+summary(fit1)
+```
+## Questions 4, 5 and 6
+
+### Question 4
+Height(cm) = 161.49845 + 0.05164(age(years)) + 14.19185(gender(0 for female, 1 for male))
+
+Female Model: Height(cm) = 161.49845 + 0.05164(age(years))
+Male Model: Height(cm) = 175.6903 + 0.05164(age(years))
+
+### Question 5
+```{r}
+#You can see the coefficients of the fit here:
+coefficients(fit1)
+
+#All the gender coefficient does is move the line up and down e.g. we are just adjusting the intercept.  The gradient remains the one set by age.
+intercept.female <-  coefficients(fit1)[1] + 0*coefficients(fit1)[3]   # e.g. the intercept plus 0*the gendermale coefficient
+intercept.male   <-  coefficients(fit1)[1] + 1*coefficients(fit1)[3]
+
+#Display the fitted lines for two groups: Smoking and non-smoking mothers
+plot(pirates$height~pirates$age,xlab="Age (years)",ylab="height (cm)",col=pirates$gender)
+
+abline(a=intercept.female,b=coefficients(fit1)[2],col=1,lty=2,lwd=3)  #a=intercept, b=gradient
+abline(a=intercept.male,b=coefficients(fit1)[2],col=2,lty=2,lwd=3)  #a=intercept, b=gradient
+legend("topleft",legend=c("Female","Male"),col=c(1,2),lty=c(2,3),lwd=3)
+title(main = "Height Versus Age")
+```
+
+### Question 6
+* H0: age = 0
+* HA: age != 0
+* T-stat: 0.805
+* P-value: 0.421
+* Conclusion: Since the p-value is greater than the alpha of 0.05, we fail to reject the null hypothesis and suggest that age did not have an effect on height after taking gender into account. 
+
+## Questions 7, 8, 9 and 10
+
+
+### Question 7
+```{r}
+# Basic plot to help explain question 7 answer
+plot(eyepatch~age, data = pirates)
+title(main = "Eyepatch Versus Age")
+```
+A linear model is not a good fit because eyepatch is a categorical variable with only two possible numeric values, 1 or 0. This is evident by the plot above. Additionally, linear models are meant to address numeric variables and not categorical. 
+
+### Question 8
+The response variable is eyepatch and the explanatory variable is age. 
+
+### Question 9
+```{r}
+# Creating second linear model
+fit2 <- glm(eyepatch ~ age, family = binomial, data = pirates)
+summary(fit2)
+```
+
+### Question 10
+Eyepatch(1 for yes, 0 for no) = -1.03339+ 0.06893(age(years))
+
+## Questions 11, 12 and 13
+
+### Question 11
+I used the Wald statistic, which is essentially the z value. The z value is 5.437 and the respective p-value is 5.41e-08. This could calculated by the slope coefficient minus the null hypothesis all divided by the standard error. 
+
+### Question 12
+```{r}
+# Using predict to find odds ratio
+newage = data.frame(age = 40)
+predict(fit2, newdata = newage, type = "response")
+```
+The odds ratio that a pirate at the age of 40 wears an eyepatch is 0.8486158. 
+
+### Question 13
+```{r}
+# Using confint.default function to get confidence interval
+confint.default(fit2, level = .95)
+```
+The 95% confidence interval for the odds ratio is (0.04408271, 0.09377592).

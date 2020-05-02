@@ -1,10 +1,14 @@
 ---
-author: "TJ Schaeffer"
 title: "Homework 9"
+author: "TJ Schaeffer"
 date: "4/20/20"
-output: html_notebook
+output: 
+  html_notebook:
+  theme: united
+  toc: yes
 ---
 
+## Setup
 ```{r}
 # clean up workspace environment
 rm(list = ls())
@@ -18,6 +22,81 @@ library(ggplot2)
 library(readr)
 library(MuMIn)
 library(corrplot)
+library(lmtest)
+library(StepReg)
 # reading in data
-aphid <- read.csv("aphideData.csv")
+movies <- read_csv("HollywoodMovies2011.csv")
 ```
+
+## Question 1: Intial Analysis of Data
+```{r}
+# Mixed matrix scatter plot
+plot(movies, main = "Scatter Plot Matrix")
+```
+
+```{r}
+# Correlation plot
+corrplot(cor(movies), method = "number")
+```
+
+## Question 2: Initial model
+```{r}
+# Creating fit1 and it's summary
+fit1 <- lm(Profitability~RottenTomatoes+AudienceScore+TheatersOpenWeek+BOAverageOpenWeek+DomesticGross, data = movies)
+summary(fit1)
+```
+Profitability = 5.42 + (0.07630)RottenTomatoes - (0.09577)AudienceScore - (0.0005657)TheatersOpenWeek -
+(0.00003603)BOAverageOpenWeek + (0.02781)DomesticGross
+
+## Question 3: Initial Model Analysis
+At a 10% signifcance level, I would remove AudienceScore, TheatersOpenWeek and BOAverageOpenWeek from the model since their p-values are higher than the significance level. This does meet our expectations from the correlation plot because the variables we are removing had a correlation equal to or less than .1 in connection to the profability variable.
+
+## Question 4: Second Model
+```{r}
+fit2 <-lm(Profitability~RottenTomatoes+DomesticGross, data = movies)
+summary(fit2)
+```
+Profability = 0.836652 + (0.030925)RottenTomatoes + (0.016305)DomesticGross
+
+## Question 5: Subsetted Tables
+```{r}
+# AIC Subset
+output1 <- bestsubset(data=movies,y="Profitability",select="AIC",best = 5)
+print(output1) 
+```
+
+```{r}
+# Adjusted R-squared Subset
+output2 <- bestsubset(data=movies,y="Profitability",select="adjRsq",best = 5)
+print(output2)
+```
+
+```{r}
+# BIC subset
+output3 <- bestsubset(data=movies,y="Profitability",select="BIC",best = 5)
+print(output3)
+```
+
+## Question 6: Goodness of Fit Analysis
+Based on the analysis, the variables that are most important are AudienceScore and RottenTomatoes, as it is one of the two models with the lowest AIC/BIC and the highest adjusted R-square. The goodness of fit measure that I rely on the most is the adjusted R^2 because it traditionally gives the best relationship between the explanatory variables and the response. The best model is the one with AudienceScore and RottenTomatoes as the explanatory variables.
+
+```{r}
+# Creating and analyzing final fit
+fit3 <- lm(Profitability~RottenTomatoes+AudienceScore, data = movies)
+summary(fit3)
+```
+Profitability = 2.69669 + (0.05883)RottenTomatoes -(0.03523)AudienceScore
+
+## Question 7: Final Fit Assumptions
+```{r}
+# Evaluating regression assumptions and multicollinearity
+plot(fit3)
+corr <- data.frame(movies$RottenTomatoes, movies$AudienceScore, movies$Profitability)
+corrplot(cor(corr), method = "number")
+```
+To evaluate the linear assumptions, I used the plot() function to analyze the final fit model. Based off the residual plot, it seems that most of the residuals fall along the residual = 0 line and form a horizontal band around it, which I can then assume the model meets the the linearity and homoskedascity assumptions. Additionally, the residuals don't form a weird pattern, which I can then also assume that the model meets the independent assumption. Finally, the Q-Q plot shows that the model meets the normality assumption. 
+
+As for the multicollinearity assumption, based off the correlation plot, none of the correlations seem to suggest that multicollinearity is not a factor in the model. 
+
+## Question 8: Final Analysis
+If I was talking to the TV reporter, I would say that the most important factors that impact profitability are the AudienceScore and the RottenTomatoes ratings of the movies. I believe this is because people are more likely to invest and see a movie with higher ratings from the people and critics who saw and rated the movie before them. My advice to directors who want their movies to have a high profitability would be to really produce a film that bolds well with the people and critics who post ratings online.
